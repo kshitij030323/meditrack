@@ -66,6 +66,17 @@ data is synthetic and the medical text is for demonstration only.
 `VISIT ↔ CONDITION_KB` dashed link is not a foreign key: it is computed at query time by cosine similarity
 between `note_embedding` and `kb_embedding`.
 
+The diagram matches the relational schema in section 6 attribute for attribute. Foreign-key columns are
+drawn as relationships, not attributes. Double lines mark total participation, meaning the foreign key is
+`NOT NULL`: every doctor works in a department, every appointment has a doctor and a patient, and every visit,
+prescription, prescription item and lab result has a parent. `PRESCRIPTION_ITEM` is an entity, not just the
+link between a prescription and a medication, because `PRESCRIPTION_AUDIT` refers to it through `LOGS`. The
+audit rows also record which `USER` made each change (`CHANGED_BY`). Both audit links are partial because
+their foreign keys are `ON DELETE SET NULL`, so audit history survives deletions. `INTERACTS_WITH` stays a
+recursive M:N relationship, stored in `drug_interactions`.
+
+The editable source is `docs/er-diagram.excalidraw`; open it at excalidraw.com.
+
 ## 6. Relational schema
 
 ![Relational schema](relational-schema.jpg)
