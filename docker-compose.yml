@@ -1,0 +1,25 @@
+# PostgreSQL 17 with the pgvector extension.
+# Credentials are read from .env.local (see `npm run db:up`), never hard-coded here.
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    container_name: meditrack-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env.local}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env.local}
+      POSTGRES_DB: ${POSTGRES_DB:-meditrack}
+      TZ: Asia/Kolkata
+      PGTZ: Asia/Kolkata
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - meditrack_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  meditrack_pgdata:
